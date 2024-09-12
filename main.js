@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 
-import TWEEN from 'node_modules/three/examples/jsm/libs/tween.module.js';
-import { TrackballControls } from 'node_modules/three/examples/jsm/controls/TrackballControls.js';
-import { CSS3DRenderer, CSS3DObject } from 'node_modules/three/examples/jsm/renderers/CSS3DRenderer.js';
+import TWEEN from '/node_modules/three/examples/jsm/libs/tween.module.js';
+import { TrackballControls } from 'three/addons/controls/TrackballControls.js';
+import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
 
 const table = [
     'H', 'Hydrogen', '1.00794', 1, 1,
