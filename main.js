@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 
-import TWEEN from '/node_modules/three/examples/jsm/libs/tween.module.js';
-import { TrackballControls } from '/node_modules/three/examples/jsm/controls/TrackballControls.js';
-import { CSS3DRenderer, CSS3DObject } from '/node_modules/three/examples/jsm/renderers/CSS3DRenderer.js';
+import TWEEN from 'three/addons/libs/tween.module.js';
+import { TrackballControls } from 'three/addons/controls/TrackballControls.js';
+import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
 
 // URL of the public S3 object
 const s3Url = "https://vapop.s3.eu-west-2.amazonaws.com/";
