@@ -15,8 +15,7 @@ const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
 const objects = [];
-const targets = { table: [], sphere: [], helix: [], grid: [] };
-const images = [];
+const targets = { sphere: [], helix: [], grid: [] };
 
 let keysArray = [];
 
@@ -35,8 +34,6 @@ function init() {
     renderer = new CSS3DRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.getElementById('container').appendChild(renderer.domElement);
-
-    //
 
     controls = new TrackballControls(camera, renderer.domElement);
     controls.minDistance = 500;
@@ -76,14 +73,14 @@ function init() {
     
     // resize listener
     window.addEventListener('resize', onWindowResize);
+
+    setInterval(checkForJsonUpdates, 10000);
 }
 
 function createShapes() {
-        // table
-
         const values = Object.values(jsonData);
 
-        for (let i = 0; i < Object.keys(jsonData).length; i ++) {
+        for (let i = 0; i < Object.keys(jsonData).length; i++) {
 
             const element = document.createElement('div');
             element.className = 'element';
@@ -92,13 +89,7 @@ function createShapes() {
             const symbol = document.createElement('img');
             symbol.className = 'symbol';
             symbol.src = s3Url + keysArray[i];
-            console.log(s3Url + keysArray[i]);
             element.appendChild(symbol);
-    
-            const details = document.createElement('div');
-            details.className = 'details';
-            details.innerHTML = values[i];
-            element.appendChild(details);
     
             const objectCSS = new CSS3DObject(element);
             objectCSS.position.x = Math.random() * 4000 - 2000;
@@ -107,15 +98,6 @@ function createShapes() {
             scene.add(objectCSS);
     
             objects.push(objectCSS);
-    
-            //
-    
-            const object = new THREE.Object3D();
-            object.position.x = (table[i + 3] * 140) - 1330;
-            object.position.y = - (table[i + 4] * 180) + 990;
-    
-            targets.table.push(object);
-    
         }
     
         // sphere
@@ -143,12 +125,12 @@ function createShapes() {
     
         for (let i = 0, l = objects.length; i < l; i++) {
     
-            const theta = i * 0.175 + Math.PI;
-            const y = - (i * 8) + 450;
+            const theta = i * 0.275 + Math.PI;
+            const y = - (i * 10) + 450;
     
             const object = new THREE.Object3D();
     
-            object.position.setFromCylindricalCoords(900, theta, y);
+            object.position.setFromCylindricalCoords(1000, theta, y);
     
             vector.x = object.position.x * 2;
             vector.y = object.position.y;
@@ -168,7 +150,7 @@ function createShapes() {
     
             object.position.x = ((i % 5) * 400) - 800;
             object.position.y = (- (Math.floor(i / 5) % 5) * 400) + 800;
-            object.position.z = (Math.floor(i / 25)) * 1000 - 2000;
+            object.position.z = (Math.floor(i / 25)) * 1000 - 1000;
     
             targets.grid.push(object);
     
@@ -243,44 +225,13 @@ async function initialFetchS3Object() {
         console.log("File data:", data);  // Handle file data here
         console.log(Object.keys(data).length);
         jsonData = data;
-        fetchImages();
+        keysArray = Object.keys(jsonData);
+        createShapes();
         return data;  // Return the data to the caller
     } catch (error) {
         console.error("Error fetching the file:", error);
         throw error;  // Rethrow the error if you want to handle it outside the function
     }
-}
-
-async function fetchImages() {
-    
-    keysArray = Object.keys(jsonData);
-
-    for (let i = 0; i < keysArray.length; i++) {
-        const imageUrl = s3Url + keysArray[i];
-        console.log(imageUrl);
-
-        try {
-            // Fetch the image from the S3 URL
-            const response = await fetch(imageUrl);
-            
-            if (!response.ok) {
-                throw new Error(`Failed to fetch the file at ${imageUrl}`);
-            }
-
-            // Read the response as an array buffer (for binary data like images)
-            const imageData = await response.arrayBuffer();
-            
-            // Store the image data in the array
-            images.push(imageData);
-
-        } catch (error) {
-            console.error("Error fetching the file:", error);
-            throw error;  // Optional: rethrow if you want to handle it outside
-        }
-    }
-
-    // After all images are fetched, process them
-    createShapes();
 }
 
 function onMouseClick(event) {
@@ -307,4 +258,145 @@ function handleObjectClick(object) {
     console.log('Clicked object:', object);
 
     // Create new fullscreen popup that shows image and prompt
+    createFullscreenPopup(object);
+}
+
+// Function to create the fullscreen popup dynamically
+function createFullscreenPopup(object) {
+    // Create the outer popup div
+    const popup = document.createElement('div');
+    popup.id = 'fullscreenPopup';
+    popup.className = 'popup';
+
+    // Create the popup content div
+    const popupContent = document.createElement('div');
+    popupContent.className = 'popup-content';
+
+    // Create the close button
+    const closeButton = document.createElement('span');
+    closeButton.className = 'close-btn';
+    closeButton.innerHTML = '&times;'; // "×" symbol
+
+    // Add event listener to close button to hide the popup
+    closeButton.addEventListener('mousedown', function() {
+        popup.style.display = 'none';
+    });
+
+    // Add some content to the popup
+    const image = document.createElement('img');
+    image.src = object.src; // Replace with your image URL
+    image.alt = 'Popup Heading Image';
+    image.style.width = '100%'; // Adjust image size if needed
+    image.style.maxWidth = '1000px'; // You can set max-width to control its size
+
+    const prompt = document.createElement('p');
+    prompt.innerText = jsonData[object.src.slice(41)];
+    prompt.style.marginTop = '20px'; // Add margin to separate the image from the text if needed
+
+
+    // Append the elements to the content and popup divs
+    popupContent.appendChild(closeButton);
+    popupContent.appendChild(image);
+    popupContent.appendChild(prompt);
+    popup.appendChild(popupContent);
+
+    // Append the popup to the body
+    document.body.appendChild(popup);
+
+    // Show the popup by default
+    popup.style.display = 'block';
+}
+
+async function checkForJsonUpdates() {
+    try {
+        const response = await fetch(s3JSONUrl);
+        if (!response.ok) {
+            throw new Error("Failed to fetch the file.");
+        }
+        
+        const data = await response.json();  // Assuming the file is in JSON format
+        
+        // Compare the serialized JSON objects
+        if (JSON.stringify(jsonData) === JSON.stringify(data)) {
+            // JSON has not changed
+            console.log('Json has not changed');
+        } else {
+            console.log('updating json');
+            jsonData = data;
+            addNewObject();
+        }
+    } catch (error) {
+        console.error("Error fetching the file:", error);
+        throw error;  // Rethrow the error if you want to handle it outside the function
+    }
+}
+
+function addNewObject() {
+    const latestObjectKey = Object.keys(jsonData)[Object.keys(jsonData).length - 1]
+    const vector = new THREE.Vector3();
+    const index = (Object.keys(jsonData).length - 1);
+
+    const element = document.createElement('div');
+    element.className = 'element';
+    element.style.backgroundColor = 'rgba(255,255,255,50)';
+
+    const symbol = document.createElement('img');
+    symbol.className = 'symbol';
+    symbol.src = s3Url + latestObjectKey;
+    element.appendChild(symbol);
+
+    const objectCSS = new CSS3DObject(element);
+    objectCSS.position.x = Math.random() * 4000 - 2000;
+    objectCSS.position.y = Math.random() * 4000 - 2000;
+    objectCSS.position.z = Math.random() * 4000 - 2000;
+    scene.add(objectCSS);
+
+    objects.push(objectCSS);
+
+    // sphere
+
+    const spherePhi = Math.acos(- 1 + (2 * 1) / 1);
+    const sphereTheta = Math.sqrt(1 * Math.PI) * spherePhi;
+
+    const sphereObject = new THREE.Object3D();
+
+    sphereObject.position.setFromSphericalCoords(800, spherePhi, sphereTheta);
+
+    vector.copy(sphereObject.position).multiplyScalar(2);
+
+    sphereObject.lookAt(vector);
+
+    targets.sphere.push(sphereObject);
+
+    console.log(targets.sphere);
+
+    // helix
+
+    const helixTheta = index * 0.275 + Math.PI;
+    const helixY = - (index * 10) + 450;
+
+    const helixObject = new THREE.Object3D();
+
+    helixObject.position.setFromCylindricalCoords(1000, helixTheta, helixY);
+
+    vector.x = helixObject.position.x * 2;
+    vector.y = helixObject.position.y;
+    vector.z = helixObject.position.z * 2;
+
+    helixObject.lookAt(vector);
+
+    targets.helix.push(helixObject);
+
+    // grid
+
+    const gridObject = new THREE.Object3D();
+
+    gridObject.position.x = ((index % 5) * 400) - 800;
+    gridObject.position.y = (- (Math.floor(index / 5) % 5) * 400) + 800;
+    gridObject.position.z = (Math.floor(index / 25)) * 1000 - 2000;
+
+    targets.grid.push(gridObject);
+
+    transform(targets.sphere, 2000);
+
 }
