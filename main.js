@@ -17,6 +17,7 @@ const mouse = new THREE.Vector2();
 const objects = [];
 const targets = { sphere: [], helix: [], grid: [] };
 
+let isModalOpen = false
 let keysArray = [];
 
 let jsonData = initialFetchS3Object();
@@ -248,6 +249,7 @@ function onMouseClick(event) {
 
     if (element.classList.contains('symbol')) {
         handleObjectClick(element);
+        isModalOpen = true
     } else {
         console.log('empty');
     }
@@ -280,6 +282,7 @@ function createFullscreenPopup(object) {
     // Add event listener to close button to hide the popup
     closeButton.addEventListener('mousedown', function() {
         popup.style.display = 'none';
+        isModalOpen = false
     });
 
     // Add some content to the popup
