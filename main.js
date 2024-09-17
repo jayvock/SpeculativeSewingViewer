@@ -268,7 +268,7 @@ function createFullscreenPopup(object) {
   // Create the close button
   const closeButton = document.createElement("span");
   closeButton.className = "close-btn";
-  closeButton.innerHTML = "&times;"; // "×" symbol
+  closeButton.innerHTML = "close"//"&times;"; // "×" symbol
 
   // Add event listener to close button to hide the popup
   closeButton.addEventListener("mousedown", function () {
@@ -285,9 +285,7 @@ function createFullscreenPopup(object) {
 
   const prompt = document.createElement("p");
   prompt.innerText = jsonData[object.src.slice(41)];
-  prompt.style.marginTop = "20px"; // Add margin to separate the image from the text if needed
-  prompt.style.overflowY = 'auto';
-  prompt.style.height = '200px';
+  prompt.className = "popup-prompt"
 
   // Append the elements to the content and popup divs
   popupContent.appendChild(closeButton);
