@@ -139,7 +139,7 @@ select {
 .popup-prompt {
   margin-top: 20px;
   overflow-y: auto;
-  max-height: 200px;
+  max-height: 400px;
   align-self: flex-start;
 }
 
