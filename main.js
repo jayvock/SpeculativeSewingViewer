@@ -387,7 +387,7 @@ function addNewObject() {
 
   gridObject.position.x = (index % 5) * 400 - 800;
   gridObject.position.y = -(Math.floor(index / 5) % 5) * 400 + 800;
-  gridObject.position.z = Math.floor(index / 25) * 1000 - 2000;
+  gridObject.position.z = Math.floor(index / 25) * 1000 - 1000;
 
   targets.grid.push(gridObject);
 
