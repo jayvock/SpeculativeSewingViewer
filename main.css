@@ -115,8 +115,8 @@ select {
   padding: 20px;
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
   border-radius: 8px;
-  max-width: 512px;
-  max-height: 512px;
+  max-width: 800px;
+  max-height: 800px;
   overflow: auto;
   display: flex;
   flex-direction: column;
