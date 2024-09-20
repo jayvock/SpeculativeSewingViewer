@@ -281,7 +281,7 @@ function createFullscreenPopup(object) {
   image.src = object.src; // Replace with your image URL
   image.alt = "Popup Heading Image";
   image.style.width = "100%"; // Adjust image size if needed
-  image.style.maxWidth = "1000px"; // You can set max-width to control its size
+  image.style.maxWidth = "512px"; // You can set max-width to control its size
 
   const prompt = document.createElement("p");
   prompt.innerText = jsonData[object.src.slice(41)];
